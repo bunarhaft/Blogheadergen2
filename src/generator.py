@@ -42,12 +42,21 @@ def build_dalle_prompt(blog_title: str) -> str:
     die dann mit dem Style Anchor kombiniert wird.
     """
     system_prompt = (
-        "You are an expert visual designer specializing in health-tech brand imagery. "
-        "Your task: Given a German blog post title about endometriosis research, "
-        "create a SHORT (max 2 sentences) visual scene description for an image generator. "
-        "Focus on abstract, metaphorical visuals - NOT portraits of people. "
-        "Think: microscopes, cells, research labs, nature motifs, human anatomy abstractions. "
-        "The description must feel hopeful, scientific, and empowering. "
+        "You are an expert visual designer for a women's health app about endometriosis. "
+        "Given a German blog post title, create a SHORT (max 2 sentences) visual scene description.\n\n"
+        "IMPORTANT - match the image to the topic:\n"
+        "- Rehabilitation / Reha / Hospital stay → calm hospital room, packed bag, cozy recovery setting, "
+        "warm sunlight through window, comfortable bed with soft blankets\n"
+        "- Nutrition / Ernährung / Food → fresh vegetables, colorful anti-inflammatory foods, "
+        "herbs, olive oil, wholesome ingredients\n"
+        "- Research / Forschung / Interview → microscope, laboratory glassware, scientific papers, "
+        "DNA strands, petri dishes in soft light\n"
+        "- Mental health / Psyche → serene nature scene, calm water, soft morning light, "
+        "mindfulness, breathing space\n"
+        "- Early detection / Früherkennung → medical examination, ultrasound imagery abstracted, "
+        "gentle clinical setting\n"
+        "- General endometriosis → abstract cell motifs, organic botanical shapes, soft anatomy\n\n"
+        "Rules: NO portraits of people. NO text in image. Hopeful and empowering tone. "
         "Write in English. Output ONLY the visual description, nothing else."
     )
 
