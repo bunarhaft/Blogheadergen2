@@ -1,23 +1,20 @@
-# app.py
-# ---------------------------------------------------------------
-# Streamlit Web-App: Interaktive Demo für den Bewerbungs-Bonus
-# Zeigt alle 10 Blog-Titel, generiert Bilder on-demand und zeigt sie an.
-# ---------------------------------------------------------------
-
 import streamlit as st
 import os
 from pathlib import Path
-from src.config import BLOG_TITLES, OUTPUT_DIR
+from src.config import fetch_blog_titles, OUTPUT_DIR  # BLOG_TITLES → fetch_blog_titles
 from src.generator import generate_and_save_image
 
-# --- Seitenkonfiguration ---
+# --- Titel einmalig beim App-Start laden (gecacht für Performance) ---
+@st.cache_data(ttl=3600)  # Cache für 1 Stunde, dann neu scrapen
+def get_titles():
+    return fetch_blog_titles(limit=10)
+
 st.set_page_config(
     page_title="Endo-App Blog Header Generator",
     page_icon="🌸",
     layout="wide",
 )
 
-# --- Brand-Styling (passend zur Endo-App Farbpalette) ---
 st.markdown("""
     <style>
     .main { background-color: #fdf8f6; }
@@ -30,7 +27,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Header ---
 st.title("🌸 Endo-App Blog Header Generator")
 st.markdown(
     "Automatische KI-generierte Header-Bilder für den Endo-Blog. "
@@ -38,7 +34,9 @@ st.markdown(
 )
 st.divider()
 
-# --- Modus: Alle generieren oder Einzelbild ---
+# Titel von Website laden
+BLOG_TITLES = get_titles()
+
 mode = st.radio(
     "Modus wählen:",
     ["📋 Alle 10 Bilder anzeigen (bereits generiert)", "🎨 Neues Bild generieren"],
@@ -47,8 +45,6 @@ mode = st.radio(
 
 if mode == "📋 Alle 10 Bilder anzeigen (bereits generiert)":
     st.subheader("Generierte Header-Bilder")
-
-    # Bilder in 2 Spalten anzeigen
     cols = st.columns(2)
     output_path = Path(OUTPUT_DIR)
     image_files = sorted(output_path.glob("*.png"))
@@ -64,12 +60,7 @@ if mode == "📋 Alle 10 Bilder anzeigen (bereits generiert)":
 elif mode == "🎨 Neues Bild generieren":
     st.subheader("Einzelnes Bild generieren")
 
-    # Blog-Titel auswählen
-    selected_title = st.selectbox(
-        "Blog-Titel auswählen:",
-        BLOG_TITLES,
-        index=0,
-    )
+    selected_title = st.selectbox("Blog-Titel auswählen:", BLOG_TITLES, index=0)
     selected_index = BLOG_TITLES.index(selected_title)
 
     if st.button("🎨 Bild generieren", type="primary"):
@@ -80,7 +71,6 @@ elif mode == "🎨 Neues Bild generieren":
                 st.image(filepath, use_container_width=True)
                 st.caption(f"**{selected_title}**")
 
-                # Download-Button
                 with open(filepath, "rb") as f:
                     st.download_button(
                         "⬇️ Bild herunterladen",
@@ -91,7 +81,6 @@ elif mode == "🎨 Neues Bild generieren":
             except Exception as e:
                 st.error(f"Fehler: {e}")
 
-# --- Footer ---
 st.divider()
 st.markdown(
     "🤖 Powered by **GPT-4o** (Prompt-Optimierung) + **DALL-E 3** (Bildgenerierung) | "
