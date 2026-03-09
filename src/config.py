@@ -1,54 +1,61 @@
-# src/config.py
-# ---------------------------------------------------------------
-# Brand Identity Konfiguration für endometriose.app / Endo-App
-# Blog-Titel werden automatisch von der Website gescrapt.
-# ---------------------------------------------------------------
 
+# src/config.py
 import requests
 from bs4 import BeautifulSoup
 
-# URL des Blogs
 BLOG_URL = "https://endometriose.app/aktuelles-2/"
+
+# Nur URLs mit diesen Pfad-Segmenten sind echte Blog-Posts
+BLOG_URL_KEYWORDS = [
+    "/impulse/",
+    "/wissen-und-tipps/",
+    "/erfahrungsberichte/",
+    "/ernaehrung/",
+    "/forschung/",
+    "/studien/",
+    "/experten-interviews/",
+]
 
 
 def fetch_blog_titles(limit: int = 10) -> list:
     """
-    Scrapt automatisch die aktuellen Blog-Titel von der Website.
-    Kein Hardcoding – immer up-to-date!
-
-    Args:
-        limit: Maximale Anzahl an Titeln (Standard: 10)
-
-    Returns:
-        Liste der Blog-Titel als Strings
+    Scrapt Blog-Titel von der Endo-App Website.
+    Filtert anhand der URL-Struktur nur echte Blog-Posts heraus
+    (keine App-Seiten, Downloads, etc.)
     """
-    response = requests.get(BLOG_URL, timeout=10)
-    response.raise_for_status()  # Fehler bei schlechtem HTTP-Status
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    response = requests.get(BLOG_URL, headers=headers, timeout=10)
+    response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Blog-Titel aus den h2/h3 Tags extrahieren
-    # Die Endo-App nutzt WordPress → Standard entry-title Klassen
-    selectors = ["h2.entry-title", "h3.entry-title", "h2.wp-block-post-title", ".post-title"]
     titles = []
+    # Alle slide-entry-title Links durchgehen
+    for el in soup.select("h3.slide-entry-title a"):
+        href = el.get("href", "")
+        title = el.get_text(strip=True)
 
-    for selector in selectors:
-        found = [el.get_text(strip=True) for el in soup.select(selector)]
-        if found:
-            titles = found
-            break  # Ersten funktionierenden Selector nehmen
+        # Nur URLs die einem Blog-Kategorie-Pfad entsprechen
+        if any(keyword in href for keyword in BLOG_URL_KEYWORDS):
+            titles.append(title)
+
+        if len(titles) >= limit:
+            break
 
     if not titles:
-        raise ValueError(f"Keine Blog-Titel auf {BLOG_URL} gefunden. Bitte Selector prüfen.")
+        raise ValueError(f"Keine Blog-Titel gefunden auf {BLOG_URL}.")
 
-    print(f"✅ {len(titles)} Blog-Titel von Website gescrapt.")
-    return titles[:limit]
+    print(f"✅ {len(titles)} Blog-Titel gescrapt:")
+    for i, t in enumerate(titles, 1):
+        print(f"  {i}. {t}")
+
+    return titles
 
 
 # ---------------------------------------------------------------
-# STYLE ANCHOR: Dieser Text wird an JEDEN DALL-E Prompt gehängt.
-# Er definiert Farben, Stil, Stimmung und visuelle Sprache der Brand.
-# Änderungen hier wirken sich auf ALLE Bilder aus → Konsistenz!
+# STYLE ANCHOR
 # ---------------------------------------------------------------
 STYLE_ANCHOR = (
     "Soft minimalist medical illustration style. "
@@ -63,11 +70,6 @@ STYLE_ANCHOR = (
     "Warm, trustworthy, and scientifically modern mood."
 )
 
-# Bildgröße: DALL-E 3 unterstützt 1792x1024 für Querformat
 IMAGE_SIZE = "1792x1024"
-
-# Qualität: "standard" zum Testen, "hd" für finale Version
 IMAGE_QUALITY = "standard"
-
-# Ausgabe-Verzeichnis
 OUTPUT_DIR = "output"
