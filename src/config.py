@@ -41,7 +41,7 @@ STYLE_ANCHOR = (
 IMAGE_SIZE = "1792x1024"
 
 # Qualität: "hd" für beste Qualität (kostet mehr Credits)
-IMAGE_QUALITY = "hd"
+IMAGE_QUALITY = "standard"
 
 # Ausgabe-Verzeichnis
 OUTPUT_DIR = "output"
