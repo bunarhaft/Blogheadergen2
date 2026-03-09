@@ -56,7 +56,6 @@ def build_dalle_prompt(blog_title: str) -> str:
         "- Early detection / Früherkennung → medical examination, ultrasound imagery abstracted, "
         "gentle clinical setting\n"
         "- General endometriosis → abstract cell motifs, organic botanical shapes, soft anatomy\n\n"
-        "Rules: NO portraits of people. NO text in image. Hopeful and empowering tone. "
         "Write in English. Output ONLY the visual description, nothing else."
     )
 

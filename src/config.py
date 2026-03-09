@@ -58,12 +58,8 @@ def fetch_blog_titles(limit: int = 10) -> list:
 # STYLE ANCHOR
 # ---------------------------------------------------------------
 STYLE_ANCHOR = (
-    "Soft minimalist medical illustration style. "
     "Color palette: muted rose (#E8A598), warm lavender (#C3B1E1), "
     "soft sage green (#A8C5A0), and clean white backgrounds. "
-    "Abstract, hopeful, and empowering aesthetic. "
-    "No text or typography in the image. "
-    "Gentle gradients, organic shapes, subtle cell or botanical motifs. "
     "Professional health-app brand identity. "
     "16:9 widescreen header format. "
     "Photorealistic yet artistic, soft-focus photography style. "
