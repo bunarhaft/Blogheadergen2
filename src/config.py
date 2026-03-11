@@ -58,7 +58,6 @@ def fetch_blog_titles(limit: int = 10) -> list:
 # STYLE ANCHOR
 # ---------------------------------------------------------------
 STYLE_ANCHOR = (
-    "Color palette: muted rose (#E8A598), warm lavender (#C3B1E1), "
     "soft sage green (#A8C5A0), and clean white backgrounds. "
     "Professional health-app brand identity. "
     "16:9 widescreen header format. "
